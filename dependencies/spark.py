@@ -64,6 +64,8 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
         spark_builder = (
             SparkSession
             .builder
+            .config("spark.hadoop.fs.azure.account.key.devstoreaccount1.dfs.core.windows.net","Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
+            .config("spark.hadoop.fs.azure.account.key.devstoreaccount1.blob.core.windows.net", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
             .appName(app_name))
     else:
         # get Spark session factory
@@ -71,6 +73,8 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
             SparkSession
             .builder
             .master(master)
+            .config("spark.hadoop.fs.azure.account.key.devstoreaccount1.dfs.core.windows.net","Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
+            .config("spark.hadoop.fs.azure.account.key.devstoreaccount1.blob.core.windows.net", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
             .appName(app_name))
 
         # create Spark JAR packages string
@@ -79,10 +83,10 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
 
         spark_files = ','.join(list(files))
         spark_builder.config('spark.files', spark_files)
-
         # add other config params
         for key, val in spark_config.items():
             spark_builder.config(key, val)
+            print(key,val)
 
     # create session and retrieve Spark logger object
     spark_sess = spark_builder.getOrCreate()

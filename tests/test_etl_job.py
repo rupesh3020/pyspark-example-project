@@ -23,9 +23,17 @@ class SparkETLTests(unittest.TestCase):
     def setUp(self):
         """Start Spark, define config and path to test data
         """
+        with open("configs/spark_config.json") as f:
+            data = f.read()
+        self.spark_config = json.loads(data)
+        self.jar_packages = ["org.apache.hadoop:hadoop-azure:3.2.4","com.microsoft.azure:azure-storage:3.1.0"]
         self.config = json.loads("""{"steps_per_floor": 21}""")
-        self.spark, *_ = start_spark()
-        self.test_data_path = 'tests/test_data/'
+        self.spark, *_ = start_spark(spark_config=self.spark_config, jar_packages=self.jar_packages)
+        self.spark.sparkContext._jsc.hadoopConfiguration().set("spark.hadoop.fs.azure.account.key.devstoreaccount1.dfs.core.windows.net",  "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
+        
+        self.spark.sparkContext._jsc.hadoopConfiguration().set("spark.hadoop.fs.azure.account.key.devstoreaccount1.blob.core.windows.net",  "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
+
+        self.test_data_path = 'wasbs://datasource@devstoreaccount1.blob.core.windows.net/'
 
     def tearDown(self):
         """Stop Spark

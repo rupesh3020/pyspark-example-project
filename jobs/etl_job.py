@@ -32,10 +32,11 @@ functions, such that the key Transform steps can be covered by tests
 and jobs or called from within another environment (e.g. a Jupyter or
 Zeppelin notebook).
 """
-
+import sys
+print(sys.path)
 from pyspark.sql import Row
 from pyspark.sql.functions import col, concat_ws, lit
-
+import json
 from dependencies.spark import start_spark
 
 
@@ -44,10 +45,14 @@ def main():
 
     :return: None
     """
+    with open("configs/spark_config.json") as f:
+        data = f.read()
+    spark_config = json.loads(data)
     # start Spark application and get Spark session, logger and config
     spark, log, config = start_spark(
         app_name='my_etl_job',
-        files=['configs/etl_config.json'])
+        files=['configs/etl_config.json'],
+        spark_config=spark_config)
 
     # log that main ETL job is starting
     log.warn('etl_job is up-and-running')
