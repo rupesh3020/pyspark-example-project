@@ -19,7 +19,7 @@ from jobs.etl_job import transform_data
 class SparkETLTests(unittest.TestCase):
     """Test suite for transformation in etl_job.py
     """
-
+    @classmethod
     def setUp(self):
         """Start Spark, define config and path to test data
         """
@@ -29,8 +29,9 @@ class SparkETLTests(unittest.TestCase):
         self.jar_packages = ["org.apache.hadoop:hadoop-azure:3.2.4","com.microsoft.azure:azure-storage:3.1.0"]
         self.config = json.loads("""{"steps_per_floor": 21}""")
         self.spark, *_ = start_spark(spark_config=self.spark_config, jar_packages=self.jar_packages)
-        self.test_data_path = 'wasb://datasource@datafeed.blob.core.windows.net/'
+        self.test_data_path = 'wasbs://datasource@datafeed.blob.core.windows.net/'
 
+    @classmethod
     def tearDown(self):
         """Stop Spark
         """
