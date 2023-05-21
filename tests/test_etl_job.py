@@ -29,16 +29,18 @@ class SparkETLTests(unittest.TestCase):
         self.jar_packages = ["org.apache.hadoop:hadoop-azure:3.2.4","com.microsoft.azure:azure-storage:3.1.0"]
         self.config = json.loads("""{"steps_per_floor": 21}""")
         self.spark, *_ = start_spark(spark_config=self.spark_config, jar_packages=self.jar_packages)
-        self.spark.sparkContext._jsc.hadoopConfiguration().set("spark.hadoop.fs.azure.account.key.devstoreaccount1.dfs.core.windows.net",  "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
-        
-        self.spark.sparkContext._jsc.hadoopConfiguration().set("spark.hadoop.fs.azure.account.key.devstoreaccount1.blob.core.windows.net",  "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
-
-        self.test_data_path = 'wasbs://datasource@devstoreaccount1.blob.core.windows.net/'
+        self.test_data_path = 'wasb://datasource@datafeed.blob.core.windows.net/'
 
     def tearDown(self):
         """Stop Spark
         """
         self.spark.stop()
+
+    def test_normal_date(self):
+        data=[("Z", 1),("A", 20),("B", 30),("C", 40),("B", 30),("B", 60)]
+        inputRDD = self.spark.sparkContext.parallelize(data)
+        count = inputRDD.count()
+        assert count == 6
 
     def test_transform_data(self):
         """Test data transformer.
